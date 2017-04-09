@@ -341,6 +341,34 @@ class ProductRepository extends CApplicationComponent
     }
 
     /**
+     * Get special products
+     *
+     * @return CActiveDataProvider
+     */
+    public function getSpecial()
+    {
+        /** @var StoreModule $module */
+        $module = Yii::app()->getModule('store');
+
+        $criteria = new CDbCriteria();
+        $criteria->condition = 'is_special = :is_special';
+        $criteria->scopes = ['published'];
+        $criteria->params = [
+            ':is_special' => true,
+        ];
+
+        return new CActiveDataProvider(
+            Product::model(), [
+                'criteria' => $criteria,
+                'sort' => [
+                    'sortVar' => 'sort',
+                    'defaultOrder' => $module->getDefaultSort(),
+                ],
+            ]
+        );
+    }
+
+    /**
      * @param array $ids
      * @return CActiveDataProvider
      */

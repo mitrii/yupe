@@ -345,7 +345,7 @@ class ProductRepository extends CApplicationComponent
      *
      * @return CActiveDataProvider
      */
-    public function getSpecial()
+    public function getSpecial($limit = null)
     {
         /** @var StoreModule $module */
         $module = Yii::app()->getModule('store');
@@ -357,9 +357,20 @@ class ProductRepository extends CApplicationComponent
             ':is_special' => true,
         ];
 
+        $pagination = [
+            'pageSize' => (int)$module->itemsPerPage,
+            'pageVar' => 'page',
+        ];
+
+        if ($limit) {
+            $pagination = false;
+            $criteria->limit = (int)$limit;
+        }
+
         return new CActiveDataProvider(
             Product::model(), [
                 'criteria' => $criteria,
+                'pagination' => $pagination,
                 'sort' => [
                     'sortVar' => 'sort',
                     'defaultOrder' => $module->getDefaultSort(),
